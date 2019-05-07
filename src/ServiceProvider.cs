@@ -5,13 +5,9 @@ using Unity.Microsoft.DependencyInjection.Lifetime;
 
 namespace Unity.Microsoft.DependencyInjection
 {
-    public class ServiceProvider : IServiceProvider, 
-                                   IServiceScopeFactory, 
-                                   IServiceScope, 
-                                   IDisposable
+    public class ServiceProvider : IServiceProvider, IServiceScopeFactory, IServiceScope
     {
         private IUnityContainer _container;
-
 
         internal ServiceProvider(IUnityContainer container)
         {
@@ -20,8 +16,6 @@ namespace Unity.Microsoft.DependencyInjection
             _container.RegisterInstance<IServiceProvider>(this, new ServiceProviderLifetimeManager(this));
             _container.RegisterInstance<IServiceScopeFactory>(this, new ExternallyControlledLifetimeManager());
         }
-
-        #region IServiceProvider
 
         public object GetService(Type serviceType)
         {
@@ -39,27 +33,12 @@ namespace Unity.Microsoft.DependencyInjection
             return null;
         }
 
-        #endregion
-
-
-        #region IServiceScopeFactory
-
         public IServiceScope CreateScope()
         {
             return new ServiceProvider(_container.CreateChildContainer());
         }
 
-        #endregion
-
-
-        #region IServiceScope
-
         IServiceProvider IServiceScope.ServiceProvider => this;
-
-        #endregion
-
-
-        #region Public Members
 
         public static IServiceProvider ConfigureServices(IServiceCollection services)
         {
@@ -73,18 +52,11 @@ namespace Unity.Microsoft.DependencyInjection
             return (UnityContainer)c._container;
         }
 
-        #endregion
-
-
-        #region Disposable
-
         public void Dispose()
         {
             IDisposable disposable = _container;
             _container = null;
             disposable?.Dispose();
         }
-
-        #endregion
     }
 }
