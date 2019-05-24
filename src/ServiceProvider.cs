@@ -8,7 +8,6 @@ namespace Unity.Microsoft.DependencyInjection
     public class ServiceProvider : IServiceProvider, IServiceScopeFactory, IServiceScope
     {
         private readonly IUnityContainer _container;
-        private bool _disposed;
 
         internal ServiceProvider(IUnityContainer container)
         {
@@ -49,17 +48,7 @@ namespace Unity.Microsoft.DependencyInjection
         }
 
         public void Dispose()
-        {
-            lock (_container)
-            {
-                if (_disposed)
-                {
-                    return;
-                }
-
-                _container.Dispose();
-                _disposed = true;
-            }
+        {            
         }
     }
 }
